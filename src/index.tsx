@@ -5,10 +5,5 @@ import Usage from './components/Usage';
 import configList from './props.json';
 
 export default (props: any) => {
-  return (
-    <Usage configList={configList}>
-      {/* {({ configProps = {} }) => <Demo configProps={configProps} />} */}
-      <Demo configProps={{}} />
-    </Usage>
-  );
+  return <Usage configList={configList}>{(p: any) => <Demo {...p} />}</Usage>;
 };

@@ -1,46 +1,52 @@
 import { Form, Select, Switch } from 'antd';
-import React from 'react';
+import React, { useState } from 'react';
 import './index.less';
-
-const { Option } = Select;
 
 export default function (props: any) {
   const { children, configList = [], ...others } = props;
-  // if (typeof props.children === 'function') {
-  //   return children(others);
-  // }
+  const [form] = Form.useForm();
+  const [values, setValues] = useState({});
 
-  console.log('others', others);
+  const onFormValuesChange = (changedValues: any, allValues: any) => {
+    console.log('jinlaile', changedValues, allValues);
+    setValues(allValues);
+  };
 
   return (
     <div className="usage-container">
-      {children}
+      {typeof props.children === 'function'
+        ? props.children({ configList, values })
+        : props.children}
       <div className="config-panel">
-        <Form size="small" layout="vertical">
+        <Form
+          form={form}
+          size="small"
+          layout="vertical"
+          initialValues={{}}
+          onValuesChange={onFormValuesChange}
+        >
           {configList.map((config: any) => {
             const type = (config.type || '').toLowerCase();
             if (!type) {
               return null;
             }
 
-            return (
-              <Form.Item label={config.name} name={config.name}>
-                {type === 'boolean' ? <Switch /> : null}
-                {type === 'enum' ? (
+            return [
+              type === 'boolean' ? (
+                <Form.Item label={config.name} name={config.name}>
+                  <Switch />
+                </Form.Item>
+              ) : null,
+              type === 'enum' ? (
+                <Form.Item label={config.name} name={config.name}>
                   <Select
                     defaultValue={config.defaultValue}
                     options={config.options || []}
                   />
-                ) : null}
-              </Form.Item>
-            );
+                </Form.Item>
+              ) : null,
+            ];
           })}
-          {/* <Form.Item label="a" name="username">
-            <Input />
-          </Form.Item>
-          <Form.Item label="a" name="username2">
-            <Switch />
-          </Form.Item> */}
         </Form>
       </div>
     </div>
